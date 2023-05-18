@@ -1,0 +1,81 @@
+diff --git a/graphicalquerybuilder/graphicalquerybuilder.pro b/graphicalquerybuilder/graphicalquerybuilder.pro
+index 3fc1ea9..e1fd8d5 100644
+--- a/graphicalquerybuilder/graphicalquerybuilder.pro
++++ b/graphicalquerybuilder/graphicalquerybuilder.pro
+@@ -44,7 +44,7 @@ FORMS += ui/graphicalquerybuildercorewidget.ui \
+          ui/graphicalquerybuilderpathwidget.ui \
+          ui/graphicalquerybuildersqlwidget.ui
+ 
+-windows: DESTDIR += $$PWD
++#windows: DESTDIR += $$PWD
+ 
+ unix|windows: LIBS += -L$$OUT_PWD/../../libgui \
+                       -L$$OUT_PWD/../../libcanvas \
+diff --git a/graphicalquerybuilder/src/graphicalquerybuilder.cpp b/graphicalquerybuilder/src/graphicalquerybuilder.cpp
+index dfa3da7..7198836 100644
+--- a/graphicalquerybuilder/src/graphicalquerybuilder.cpp
++++ b/graphicalquerybuilder/src/graphicalquerybuilder.cpp
+@@ -26,12 +26,16 @@ GraphicalQueryBuilder::GraphicalQueryBuilder(void)
+ 	configurePluginInfo(getPluginTitle(),
+ 						getPluginVersion(),
+ 						getPluginAuthor(),
++#if QT_VERSION < QT_VERSION_CHECK(5, 0, 0)
+ 						getPluginDescription(),
+ 
+                         GlobalAttributes::getPluginsDir() +
+ 						GlobalAttributes::DirSeparator +
+ 						QString("graphicalquerybuilder") +
+ 						GlobalAttributes::DirSeparator + QString("graphicalquerybuilder.png"));
++#else
++						getPluginDescription());
++#endif
+ 
+ 	is_plugin_active=false;
+ }
+@@ -68,6 +72,7 @@ void GraphicalQueryBuilder::initPlugin(MainWindow *main_window)
+ {
+ 	PgModelerPlugin::initPlugin(main_window);
+ 
++
+ 	QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Preferred);
+ 	QSizePolicy sizePolicy2(QSizePolicy::Preferred, QSizePolicy::Minimum);
+ 
+@@ -255,3 +260,20 @@ bool GraphicalQueryBuilder::hasMenuAction(void)
+ {
+ 	return(false);
+ }
++
++#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
++QAction *GraphicalQueryBuilder::getToolbarAction()
++{
++	return nullptr;
++}
++
++QAction *GraphicalQueryBuilder::getModelAction()
++{
++	return nullptr;
++}
++
++QAction *GraphicalQueryBuilder::getConfigAction()
++{
++	return nullptr;
++}
++#endif
+\ No newline at end of file
+diff --git a/graphicalquerybuilder/src/graphicalquerybuilder.h b/graphicalquerybuilder/src/graphicalquerybuilder.h
+index 928561c..a95d952 100644
+--- a/graphicalquerybuilder/src/graphicalquerybuilder.h
++++ b/graphicalquerybuilder/src/graphicalquerybuilder.h
+@@ -63,6 +63,12 @@ class GraphicalQueryBuilder: public QObject, public PgModelerPlugin {
+ 		void executePlugin(ModelWidget *model_wgt);		
+ 		void initPlugin(MainWindow *main_window);
+ 
++#if QT_VERSION >= QT_VERSION_CHECK(5, 0, 0)
++		QAction *getToolbarAction();
++		QAction *getModelAction();
++		QAction *getConfigAction();
++#endif
++
+ private slots:
+         void handleModelChange(ModelWidget *new_model);
+ 
