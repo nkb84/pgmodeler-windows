@@ -1,5 +1,5 @@
 # pgmodeler-windows
-This is a windows build binary of pgmodeler. Please download the binary from the `Release` section
+This is a windows build binary of pgmodeler. Please download the binary from the [Release](https://github.com/nkb84/pgmodeler-windows/releases) section
 
 # Orginal source code
 - https://github.com/pgmodeler/pgmodeler
